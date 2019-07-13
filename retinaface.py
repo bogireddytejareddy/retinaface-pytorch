@@ -313,8 +313,8 @@ class RetinaFace_MobileNet(nn.Module):
         x = self.mobilenet0_conv19(x)
         x = self.mobilenet0_conv20(x)
         x = self.mobilenet0_conv21(x)
-        x16 = self.mobilenet0_conv22(x)
-        x = self.mobilenet0_conv23(x16)
+        x22 = self.mobilenet0_conv22(x)
+        x = self.mobilenet0_conv23(x22)
         x = self.mobilenet0_conv24(x)
         x = self.mobilenet0_conv25(x)
         x = self.mobilenet0_conv26(x)
@@ -333,31 +333,9 @@ class RetinaFace_MobileNet(nn.Module):
         cls32 = torch.reshape(cls32, (batchsize, 4, -1, cls32_shape[3]))
         bbox32 = self.face_rpn_bbox_pred_stride32(o8)
         landmark32 = self.face_rpn_landmark_pred_stride32(o8)
-        p1 = self.rf_c2_lateral(x16)
+        p1 = self.rf_c2_lateral(x22)
         p2 = self.rf_c3_upsampling(o1)
-        #p2 = F.adaptive_avg_pool2d(p2, (p1.shape[2], p1.shape[3])) 
-        
-        diff1 = p2.shape[2] - p1.shape[2]
-        diff2 = p2.shape[3] - p1.shape[3]
-        if diff1 != 0 and diff2 == 0:
-            if diff1 % 2 == 0:
-                p2 = p2[:,:,diff1//2:-1 * (diff1//2),:]
-            else:
-                p2 = p2[:,:,diff1//2:-1 * (diff1//2) - 1,:]
-        elif diff2 !=0 and diff1==0:
-            if diff2 % 2 == 0:
-                p2 = p2[:,:,:,diff2//2:-1 * (diff2//2)]
-            else:
-                p2 = p2[:,:,:,diff2//2:-1 * (diff2//2) - 1]
-        elif diff2 !=0 and diff1 != 0: 
-            if diff1 % 2 == 0 and diff2 % 2 == 0:
-                p2 = p2[:,:,diff1//2:-1 * (diff1//2), diff2//2:-1 * (diff2//2)]
-            elif diff1 % 2 != 0 and diff2 % 2 == 0:
-                p2 = p2[:,:,diff1//2:-1 * (diff1//2) - 1,diff2//2:-1 * (diff2//2)]
-            elif diff1 % 2 == 0 and diff2 % 2 != 0:
-                p2 = p2[:,:,diff1//2:-diff1//2,diff2//2:-1 * (diff2//2) - 1] 
-            elif diff1 % 2 != 0 and diff2 % 2 != 0: 
-                p2 = p2[:,:,diff1//2:-1 * (diff1//2) - 1,diff2//2:-1 * (diff2//2) - 1]
+        p2 = F.adaptive_avg_pool2d(p2, (p1.shape[2], p1.shape[3])) 
         
         p3 = p1 + p2
         p4 = self.rf_c2_aggr(p3)
@@ -377,29 +355,7 @@ class RetinaFace_MobileNet(nn.Module):
         landmark16 = self.face_rpn_landmark_pred_stride16(p10)
         q1 = self.rf_c1_red_conv(x10)
         q2 = self.rf_c2_upsampling(p4)
-        #q2 = F.adaptive_avg_pool2d(q2, (q1.shape[2], q1.shape[3]))
-        
-        diff1 = q2.shape[2] - q1.shape[2]
-        diff2 = q2.shape[3] - q1.shape[3]
-        if diff1 != 0 and diff2 == 0:
-            if diff1 % 2 == 0:
-                q2 = q2[:,:,diff1//2:-1 * (diff1//2),:]
-            else:
-                q2 = q2[:,:,diff1//2:-1 * (diff1//2) - 1,:]
-        elif diff2 !=0 and diff1==0:
-            if diff2 % 2 == 0:
-                q2 = q2[:,:,:,diff2//2:-1 * (diff2//2)]
-            else:
-                q2 = q2[:,:,:,diff2//2:-1 * (diff2//2) - 1]
-        elif diff2 !=0 and diff1 != 0: 
-            if diff1 % 2 == 0 and diff2 % 2 == 0:
-                q2 = q2[:,:,diff1//2:-1 * (diff1//2), diff2//2:-1 * (diff2//2)]
-            elif diff1 % 2 != 0 and diff2 % 2 == 0:
-                q2 = q2[:,:,diff1//2:-1 * (diff1//2) - 1,diff2//2:-1 * (diff2//2)]
-            elif diff1 % 2 == 0 and diff2 % 2 != 0:
-                q2 = q2[:,:,diff1//2:-diff1//2,diff2//2:-1 * (diff2//2) - 1] 
-            elif diff1 % 2 != 0 and diff2 % 2 != 0: 
-                q2 = q2[:,:,diff1//2:-1 * (diff1//2) - 1,diff2//2:-1 * (diff2//2) - 1]
+        q2 = F.adaptive_avg_pool2d(q2, (q1.shape[2], q1.shape[3]))
         
         q3 = q1 + q2
         q4 = self.rf_c1_aggr(q3)
