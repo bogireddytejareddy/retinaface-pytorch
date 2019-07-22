@@ -11,7 +11,7 @@ python setup.py build_ext --inplace
 python inference.py
 ```
 
-### Evaluation:
+### Evaluation(WIDERFACE):
 Easy   Val AP: 0.8872715908531869
 <br>
 Medium Val AP: 0.8663337842229522
