@@ -18,7 +18,6 @@ Medium Val AP: 0.8663337842229522
 <br>
 Hard   Val AP: 0.771796729363941
 <br>
-<img src="https://s2.aconvert.com/convert/p3r68-cdx67/tby4g-ehney.png" width="800" height="250">
 
 ### Test Results:
 <img src="https://github.com/bogireddytejareddy/retinaface-pytorch/blob/master/test_results/t6.jpg" width="480" height="300">
